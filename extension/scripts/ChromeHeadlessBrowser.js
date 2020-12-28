@@ -11,7 +11,7 @@ class ChromeHeadlessBrowser {
     // constructors cannot handle asynchronous
     this.browserPromise = puppeteer.launch({
       headless: true,
-      args: process.env.PUPPETEER_NO_SANDBOX ? ['--no-sandbox'] : [] 
+      args: process.env.PUPPETEER_ARGS ? process.env.PUPPETEER_ARGS.split(' ') : []
     })
     this.pagePromise = this.browserPromise.then(function (browser) {
       return browser.newPage()
@@ -20,7 +20,7 @@ class ChromeHeadlessBrowser {
   async loadUrl (url) {
     debug('Loading url', url)
     const page = await this.pagePromise
-    await page.goto(url, {waitUntil: 'networkidle2'})
+    await page.goto(url, {waitUntil: process.env.PUPPETEER_WAIT_UNTIL || 'networkidle2'})
   }
   async close () {
     try {
